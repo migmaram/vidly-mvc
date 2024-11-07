@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace Vidly.Models
 {
@@ -12,5 +13,8 @@ namespace Vidly.Models
         public short SignUpFee { get; set; }
         public byte DurationInMonths { get; set; }
         public byte DiscountRate { get; set; }
+
+        public static readonly byte Unkonwn = 0;
+        public static readonly byte PayAsYouGo = 1;
     }
 }

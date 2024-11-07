@@ -9,8 +9,11 @@ namespace Vidly.Models
         [StringLength(255)]
         public string Name { get; set; }
         public bool IsSuscribedToNewsletter { get; set; }
-        public MembershipType MembershipType { get; set; }
+        public MembershipType? MembershipType { get; set; }
+        [Required]
+        [Display(Name = "Membership type")]
         public byte MembershipTypeId { get; set; }
+        [Min18YearsIfAMember]
         public DateTime? Birthdate { get; set; }
     }
 }
