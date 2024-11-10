@@ -1,16 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Vidly.DTOs;
+using Vidly.Models;
 
-namespace Vidly.Models
+namespace Vidly.DTOs
 {
-    public class Customer 
+    public class CustomerDTO 
     {
         public int Id { get; set; }
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
         public bool IsSuscribedToNewsletter { get; set; }
-        public MembershipType? MembershipType { get; set; }
         [Required]
         [Display(Name = "Membership type")]
         public byte MembershipTypeId { get; set; }

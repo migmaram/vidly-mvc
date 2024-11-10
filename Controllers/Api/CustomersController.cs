@@ -13,44 +13,47 @@ namespace Vidly.Controllers.Api
     public class CustomersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;        
-        public CustomersController()
+        private readonly IMapper _mapper;
+        public CustomersController(IMapper mapper)
         {
             _context = new ApplicationDbContext();
-        }     
-        public async Task<ActionResult<IEnumerable<Customer>>>GetCustomers()
+            _mapper = mapper;
+        }
+        public async Task<ActionResult<IEnumerable<CustomerDTO>>>GetCustomers()
         {
             var customers = await _context.Customers.ToListAsync();
-            return customers;
+            return _mapper.Map<List<CustomerDTO>>(customers);
         }
 
         // GET: /api/customers/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(int id)
+        public async Task<ActionResult<CustomerDTO>> GetCustomer(int id)
         { 
             var customer = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);
             if (customer == null)
                 return NotFound();
 
-            return customer;
+            return _mapper.Map<CustomerDTO>(customer);
         }
         // POST: /api/customers
         [HttpPost]
-        public async Task<IActionResult> PostCustomer(Customer customer)
+        public async Task<IActionResult> PostCustomer(CustomerDTO customerDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
 
+            var customer = _mapper.Map<Customer>(customerDTO);
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            customer.Id = customer.Id;
+            customerDTO.Id = customerDTO.Id;
 
-            return CreatedAtAction(nameof(Customer), new { id = customer.Id, customer});
+            return CreatedAtAction(nameof(Customer), new { id = customerDTO.Id, customerDTO});
         }
 
         // PUT: /api/customers/{id}
         [HttpPut]
-        public async Task<IActionResult> PutCustomer(int id, Customer customer)
+        public async Task<IActionResult> PutCustomer(int id, CustomerDTO customerDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
@@ -59,11 +62,7 @@ namespace Vidly.Controllers.Api
             if (customerInDb == null)
                 return NotFound();
 
-            customerInDb.Name = customer.Name;
-            customerInDb.Birthdate = customer.Birthdate;
-            customerInDb.IsSuscribedToNewsletter = customer.IsSuscribedToNewsletter;
-            customerInDb.MembershipTypeId = customer.MembershipTypeId;
-
+            _mapper.Map(customerInDb, customerDTO);
             await _context.SaveChangesAsync();
             return NoContent();
         }

@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Vidly
 {
     public class Program
@@ -8,6 +10,7 @@ namespace Vidly
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             var app = builder.Build();
 
