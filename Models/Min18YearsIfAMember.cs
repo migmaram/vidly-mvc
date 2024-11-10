@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Vidly.DTOs;
 
 namespace Vidly.Models
 {

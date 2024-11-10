@@ -9,7 +9,11 @@ namespace Vidly
         public MappingProfile()
         {
             CreateMap<Customer, CustomerDTO>();
-            CreateMap<CustomerDTO, Customer>();
+            CreateMap<CustomerDTO, Customer>().
+                ForMember(c => c.Id, opt => opt.Ignore()); ;
+            CreateMap<Movie, MovieDTO>();
+            CreateMap<MovieDTO, Movie>().
+                ForMember(m => m.Id, opt => opt.Ignore());
         }
     }
 }
