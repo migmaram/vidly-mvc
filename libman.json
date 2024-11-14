@@ -9,23 +9,17 @@
         "jquery.js",
         "jquery.min.map"
       ],
-      "destination": "wwwroot/lib/jquery/"
-    },
-    {
-      "provider": "cdnjs",
-      "library": "datatables@1.10.21",
-      "destination": "wwwroot/lib/datatables/"
+      "destination": "wwwroot/lib/jquery/dist/"
     },
     {
       "provider": "unpkg",
       "library": "bootstrap@5.3.3",
       "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "bootbox.js@6.0.0",
+      "destination": "wwwroot/lib/bootbox.js/"
     }
-  ,
-{
-  "provider": "cdnjs",
-  "library": "bootbox.js@6.0.0",
-  "destination": "wwwroot/lib/bootbox.js/"
-}
-]
+  ]
 }

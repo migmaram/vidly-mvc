@@ -24,7 +24,9 @@ namespace Vidly.Controllers.Api
         // GET: api/customers/
         public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
         {
-            var customers = await _context.Customers.ToListAsync();
+            var customers = await _context.Customers.
+                Include(c => c.MembershipType).
+                ToListAsync();
             return Ok(_mapper.Map<List<CustomerDTO>>(customers));
         }
 
