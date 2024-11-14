@@ -4,35 +4,67 @@
 @{
 }
 
-@model IEnumerable<Vidly.Models.Movie>
-
 <h2>Movies</h2>
-@if (!Model.Any())
+@using (@Html.BeginForm("New", "Movies"))
 {
-    <p>We don't have any movies yet :(</p>
-}
-else
-{
-    @using (@Html.BeginForm("New", "Movies"))
-    {
-        <button type="submit" class="btn btn-primary">+</button>
-
-        <table class="table table-bordered table-hover">
+    <button type="submit" class="btn btn-primary">+</button>
+    <table id="movies" class="table table-bordered table-hover">
+        <thead>
             <tr>
                 <th>Movie</th>
                 <th>Genre</th>
+                <th>Actions</th>
             </tr>
-            @foreach (var movie in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.ActionLink(movie.Name, "Edit", "Movies",
-                                 new { id = movie.Id }, null)
-                    </td>
-                    <td>@movie.Genre.Name</td>
-                </tr>
-            }
-        </table>
-    }
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+}
 
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            var table = $("#movies").DataTable({
+                language: {
+                    lengthMenu: "Entries: _MENU_"
+                },
+                ajax: {
+                    url: "api/movies",
+                    dataSrc: ""
+                },
+                columns:
+                    [
+                        {
+                            data: "name",
+                            render: function (data, type, movie) {
+                                return "<a href='/movies/edit/" + movie.id + "'>" + movie.name + "</a>";
+                            }
+                        },
+                        {
+                            data: "genre.name"
+                        },
+                        {
+                            data: "id",
+                            render: function (data) {
+                                return "<button type='button' class='btn btn-link js-delete' data-movie-id='" + data + "'>Delete</button>";
+                            }
+                        }
+                    ]
+            });
+            $("#movies").on("click", ".js-delete", function () {
+                let button = $(this);
+                bootbox.confirm("This is not reversible. Continue?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "api/movies/" + button.attr("data-movie-id"),
+                            method: "DELETE",
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                            }
+                        });
+                    }
+                });
+            })
+        });
+    </script>
 }
