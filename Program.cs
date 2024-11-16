@@ -1,4 +1,8 @@
 using System.Reflection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Vidly.Areas.Identity.Data;
+using Vidly.Data;
 
 namespace Vidly
 {
@@ -7,6 +11,11 @@ namespace Vidly
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+
+            builder.Services.AddDefaultIdentity<VidlyUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -33,6 +42,7 @@ namespace Vidly
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            app.MapRazorPages();
             app.Run();
         }
     }
