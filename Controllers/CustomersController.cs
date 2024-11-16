@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
 using Vidly.Migrations;
 using Vidly.Models;
@@ -7,7 +6,6 @@ using Vidly.ViewModels;
 
 namespace Vidly.Controllers
 {
-    [Authorize]
     public class CustomersController : Controller
     {
         private ApplicationDbContext _context;

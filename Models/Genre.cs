@@ -7,6 +7,6 @@ namespace Vidly.Models
         public byte Id { get; set; }
         [Required]
         [StringLength(100)]
-        public required string Name { get; set; }
+        public string Name { get; set; }
     }
 }
