@@ -31,7 +31,9 @@ namespace Vidly.Controllers.Api
         [HttpGet("{id}")]
         public async Task<ActionResult<MovieDTO>> GetMovies(int id)
         {
-            var movie = await _context.Movies.SingleOrDefaultAsync(m => m.Id == id);
+            var movie = await _context.Movies
+                .Include(m => m.Genre)
+                .SingleOrDefaultAsync(m => m.Id == id);
             if (movie == null)
                 return NotFound();
 
