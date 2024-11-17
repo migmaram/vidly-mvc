@@ -50,7 +50,7 @@ namespace Vidly.Controllers.Api
 
             movieDTO.Id = movie.Id;
 
-            return Created(new Uri($"{Request.GetEncodedUrl()}/{movieDTO.Id}"), new { id = movieDTO.Id, movieDTO });
+            return Created(new Uri($"{Request.GetEncodedUrl()}/{movie.Id}"), new { id = movie.Id, movie });
         }
         // PUT api/movies/{id}
         [HttpPut("{id}")]

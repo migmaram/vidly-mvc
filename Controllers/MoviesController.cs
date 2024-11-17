@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Text.Encodings.Web;
 using Vidly.Models;
 using Vidly.ViewModels;
@@ -58,7 +59,10 @@ namespace Vidly.Controllers
             }
 
             if (movie.Id == 0)
+            {
+                movie.DateAdded = DateTime.Now;
                 _context.Movies.Add(movie);
+            }
             else
             {
                 var existingMovie = _context.Movies.SingleOrDefault(m => m.Id == movie.Id);

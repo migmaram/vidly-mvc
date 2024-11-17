@@ -7,16 +7,16 @@
 @model IEnumerable<Vidly.Models.Movie>
 
 <h2>Movies</h2>
-@if (!Model.Any())
+@using (@Html.BeginForm("New", "Movies"))
 {
-    <p>We don't have any movies yet :(</p>
-}
-else
-{
-    @using (@Html.BeginForm("New", "Movies"))
-    {
-        <button type="submit" class="btn btn-primary">+</button>
+    <button type="submit" class="btn btn-primary">+</button>
 
+    @if (!Model.Any())
+    {
+        <p>We don't have any movies yet :(</p>
+    }
+    else
+    {
         <table class="table table-bordered table-hover">
             <tr>
                 <th>Movie</th>
@@ -34,5 +34,5 @@ else
             }
         </table>
     }
-
 }
+
