@@ -5,7 +5,6 @@ namespace Vidly.DTOs
 {
     public class MovieDTO
     {
-        public int Id { get; set; }
         [Required]
         [StringLength(255)]
         public required string Name { get; set; }

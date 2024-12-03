@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -20,7 +21,7 @@ namespace Vidly.Controllers.Api
         {
             _context = new ApplicationDbContext();
             _mapper = mapper;
-        }
+        }        
         // GET: api/customers/
         public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
         {
@@ -29,7 +30,6 @@ namespace Vidly.Controllers.Api
                 ToListAsync();
             return Ok(_mapper.Map<List<CustomerDTO>>(customers));
         }
-
         // GET: /api/customers/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerDTO>> GetCustomer(int id)
@@ -42,6 +42,7 @@ namespace Vidly.Controllers.Api
         }
         // POST: /api/customers
         [HttpPost]
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public async Task<IActionResult> PostCustomer(CustomerDTO customerDTO)
         {
             if (!ModelState.IsValid)
@@ -51,13 +52,11 @@ namespace Vidly.Controllers.Api
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
-            customerDTO.Id = customer.Id;
-
-            return Created(new Uri(Request.GetEncodedUrl() + "/" + customerDTO.Id), new { id = customerDTO.Id, customerDTO });
+            return Created(new Uri(Request.GetEncodedUrl() + "/" + customer.Id), new { id = customer.Id, customerDTO });
         }
-
         // PUT: /api/customers/{id}
         [HttpPut("{id}")]
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public async Task<IActionResult> PutCustomer(int id, CustomerDTO customerDTO)
         {
             if (!ModelState.IsValid)
@@ -73,6 +72,7 @@ namespace Vidly.Controllers.Api
         }
         // DELETE: /api/customers/{id}
         [HttpDelete("{id}")]
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public async Task<IActionResult> DeleteCustomer(int id)
         {
             var customerInDb = await _context.Customers.SingleOrDefaultAsync(c => c.Id == id);

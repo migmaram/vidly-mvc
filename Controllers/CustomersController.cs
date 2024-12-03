@@ -1,29 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
 using Vidly.Migrations;
 using Vidly.Models;
 using Vidly.ViewModels;
 
 namespace Vidly.Controllers
-{
+{    
     public class CustomersController : Controller
     {
         private ApplicationDbContext _context;
-
         public CustomersController()
         {
             _context = new ApplicationDbContext();
         }
-
         protected override void Dispose(bool disposing)
         {
             _context.Dispose();
         }
-
         public IActionResult Index()
         {
-            return View();
+            if (User.IsInRole(RoleName.CanManageCustomers))
+                return View("List");
+            return View("ReadOnlyList");
         }
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public IActionResult Details(int id)
         {
             var customer = _context.Customers.Include(c => c.MembershipType).SingleOrDefault(c => c.Id == id);
@@ -33,6 +34,7 @@ namespace Vidly.Controllers
             }
             return View(customer);
         }
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public IActionResult New()
         {
             var membershipTypes = _context.MembershipTypes.ToList();
@@ -46,6 +48,7 @@ namespace Vidly.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public IActionResult Save(Customer customer)
         {
 
@@ -73,6 +76,7 @@ namespace Vidly.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index", "Customers");
         }
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public IActionResult Edit(int id)
         {
             var customer = _context.Customers.SingleOrDefault(c => c.Id == id);

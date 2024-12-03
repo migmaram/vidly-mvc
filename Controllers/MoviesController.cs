@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.Entity;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Text.Encodings.Web;
@@ -14,17 +15,18 @@ namespace Vidly.Controllers
         {
             _context = new ApplicationDbContext();
         }
-
         protected override void Dispose(bool disposing)
         {
             _context.Dispose();
         }
-
-        //GET: /Movies/
         public IActionResult Index()
         {
-            return View();
+            if (User.IsInRole(RoleName.CanManageMovies))
+                return View("List");
+
+            return View("ReadOnlyList");
         }
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IActionResult Details(int id)
         {
             var movie = _context.Movies.Include(m => m.Genre).SingleOrDefault(m => m.Id == id);
@@ -35,6 +37,7 @@ namespace Vidly.Controllers
 
             return View(movie);
         }
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IActionResult New()
         {
             var viewModel = new MovieViewModel
@@ -46,6 +49,7 @@ namespace Vidly.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IActionResult Save(Movie movie)
         {
             if (!ModelState.IsValid)
@@ -76,7 +80,7 @@ namespace Vidly.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index", "Movies");
         }
-
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IActionResult Edit(int id)
         {
             var movie = _context.Movies.SingleOrDefault(m => m.Id == id);

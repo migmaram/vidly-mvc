@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -24,15 +25,16 @@ namespace Vidly.Controllers.Api
         // GET api/movies
         public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies() 
         {
-            var movies = await _context.Movies.ToListAsync();
+            var movies = await _context.Movies
+                .Include(m => m.Genre)
+                .ToListAsync();
             return Ok(_mapper.Map<List<MovieDTO>>(movies));
         }
         // GET api/movies/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<MovieDTO>> GetMovies(int id)
         {
-            var movie = await _context.Movies
-                .Include(m => m.Genre)
+            var movie = await _context.Movies                
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (movie == null)
                 return NotFound();
@@ -41,6 +43,7 @@ namespace Vidly.Controllers.Api
         }
         // POST api/movies/
         [HttpPost]
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public async Task<IActionResult> PostMovies(MovieDTO movieDTO)
         {
             if (!ModelState.IsValid)
@@ -50,12 +53,11 @@ namespace Vidly.Controllers.Api
             _context.Movies.Add(movie);
             await _context.SaveChangesAsync();
 
-            movieDTO.Id = movie.Id;
-
             return Created(new Uri($"{Request.GetEncodedUrl()}/{movie.Id}"), new { id = movie.Id, movie });
         }
         // PUT api/movies/{id}
         [HttpPut("{id}")]
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public async Task<IActionResult> PutMovies(int id, MovieDTO movieDTO)
         {
             if (!ModelState.IsValid)
@@ -72,6 +74,7 @@ namespace Vidly.Controllers.Api
         }
         // PUT api/movies/{id}
         [HttpDelete("{id}")]
+        [Authorize(Roles = RoleName.CanManageCustomers)]
         public async Task<IActionResult> DeleteMovies(int id)
         {
             var movieInDb = await _context.Movies.SingleOrDefaultAsync(m => m.Id == id);
